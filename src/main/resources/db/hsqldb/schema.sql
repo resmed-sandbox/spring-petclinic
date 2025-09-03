@@ -5,6 +5,8 @@ DROP TABLE visits IF EXISTS;
 DROP TABLE pets IF EXISTS;
 DROP TABLE types IF EXISTS;
 DROP TABLE owners IF EXISTS;
+DROP TABLE roles IF EXISTS;
+DROP TABLE users IF EXISTS;
 
 
 CREATE TABLE vets (
@@ -48,7 +50,7 @@ CREATE TABLE pets (
   name       VARCHAR(30),
   birth_date DATE,
   type_id    INTEGER NOT NULL,
-  owner_id   INTEGER
+  owner_id   INTEGER NOT NULL
 );
 ALTER TABLE pets ADD CONSTRAINT fk_pets_owners FOREIGN KEY (owner_id) REFERENCES owners (id);
 ALTER TABLE pets ADD CONSTRAINT fk_pets_types FOREIGN KEY (type_id) REFERENCES types (id);
@@ -56,9 +58,25 @@ CREATE INDEX pets_name ON pets (name);
 
 CREATE TABLE visits (
   id          INTEGER IDENTITY PRIMARY KEY,
-  pet_id      INTEGER,
+  pet_id      INTEGER NOT NULL,
   visit_date  DATE,
   description VARCHAR(255)
 );
 ALTER TABLE visits ADD CONSTRAINT fk_visits_pets FOREIGN KEY (pet_id) REFERENCES pets (id);
 CREATE INDEX visits_pet_id ON visits (pet_id);
+
+CREATE  TABLE users (
+  username    VARCHAR(20) NOT NULL ,
+  password    VARCHAR(60) NOT NULL ,
+  enabled     BOOLEAN DEFAULT TRUE NOT NULL ,
+  PRIMARY KEY (username)
+);
+
+CREATE TABLE roles (
+  id              INTEGER IDENTITY PRIMARY KEY,
+  username        VARCHAR(20) NOT NULL,
+  role            VARCHAR(20) NOT NULL
+);
+ALTER TABLE roles ADD CONSTRAINT fk_username FOREIGN KEY (username) REFERENCES users (username);
+CREATE INDEX fk_username_idx ON roles (username);
+
